@@ -1,0 +1,45 @@
+package karazin.scala.users.group.week7.homework
+
+/*
+  Write test for functors
+
+  Make sure that the following cases are tested:
+    • Map[String, Int] works
+    • Map[String, Boolean] works
+    • Map[String, String] works
+    • Map[String, List[Int]], Map[String, List[Boolean]], Map[String, List[String]] works
+
+  Review:
+    • https://scalameta.org/munit/docs/tests.html
+    • https://scalameta.org/munit/docs/assertions.html
+    • https://scalameta.org/munit/docs/assertions.html#compileerrors
+    • https://scalameta.org/munit/docs/integrations/scalacheck.html
+
+ */
+
+import munit.ScalaCheckSuite
+import org.scalacheck.Prop._
+
+class FunctorsSuite extends ScalaCheckSuite:
+
+  property("successful test example") {
+    forAll { (int: Int) =>
+      int == int      
+    }
+  }
+
+/*
+  Test example: 
+    generate Map[String, Int]
+    generate f: Int ⇒ Int
+    prove that f is applied to values of generated map
+  
+  property("functor for Map[String, Int]") {
+    forAll { (map: Map[String, Int], f: Int ⇒ Int) =>
+
+      Functor[???].map(map)(f) == map.view.mapValues(f)
+
+    }
+  }
+*/
+
