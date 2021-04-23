@@ -26,7 +26,7 @@ object adt:
         case ErrorOr.Some(v) ⇒ try {
           f(v)
         } catch {
-          case NonFatal(e) ⇒ ErrorOr.SomeError(e)
+          case e: Exception ⇒ ErrorOr.SomeError(e)
         }
     
   
@@ -36,7 +36,7 @@ object adt:
         case ErrorOr.Some(v) ⇒ try {
           ErrorOr.Some(f(v))
         } catch {
-          case NonFatal(e) ⇒ ErrorOr.SomeError(e)
+          case e: Exception ⇒ ErrorOr.SomeError(e)
         }
   
   
