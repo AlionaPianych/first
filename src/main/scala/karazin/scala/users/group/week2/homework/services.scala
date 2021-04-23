@@ -12,9 +12,9 @@ import karazin.scala.users.group.week2.homework.model._
   The services need to be implemented in case of running the code
  */
 object services:
-  
-  def getUserProfile(): ErrorOr[UserProfile] = ???
-  def getPosts(userId: UUID): ErrorOr[List[Post]] = ???
-  def getComments(postId: UUID): ErrorOr[List[Comment]] = ??? 
-  def getLikes(postId: UUID): ErrorOr[List[Like]] = ???
-  def getShares(postId: UUID): ErrorOr[List[Share]] = ???
+
+  def getUserProfile(): ErrorOr[UserProfile] = ErrorOr(UserProfile(UUID(42,42)))
+  def getPosts(userId: UUID): ErrorOr[List[Post]] = ErrorOr(List(null))
+  def getComments(postId: UUID): ErrorOr[List[Comment]] = ErrorOr(List(Comment(postId, postId)))
+  def getLikes(postId: UUID): ErrorOr[List[Like]] = ErrorOr(List(Like(postId,postId)))
+  def getShares(postId: UUID): ErrorOr[List[Share]] = ErrorOr(List(null))
