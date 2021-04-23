@@ -8,46 +8,43 @@ package karazin.scala.users.group.week1.homework
   * https://en.wikipedia.org/wiki/Algebraic_data_type
   * https://docs.scala-lang.org/scala3/book/types-adts-gadts.html
 */
+import scala.util.control.NonFatal
 
 object adt:
   
   enum ErrorOr[+V]:
-    
-    // Added to make it compilable. Remove it.
-    case DummyCase
-    
-    /* 
-      Two case must be defined: 
-      * a case for a regular value
-      * a case for an error (it should contain an actual throwable)
-     */
   
-    /* 
-      The method is used for defining execution pipelines
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-    */ 
-    def flatMap = ???
+    case Some(x: V) extends ErrorOr[V]
 
-    /* 
-      The method is used for changing the internal object
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-     */
-    def map = ???
-      
-  // Companion object to define constructor
+    case SomeError(x: Throwable) extends ErrorOr[V]
+
+    def flatMap[Q](f: V ⇒ ErrorOr[Q]): ErrorOr[Q] = 
+      this match
+        case ErrorOr.SomeError(q) ⇒ ErrorOr.SomeError(q)
+        case ErrorOr.Some(v) ⇒ try {
+          f(v)
+        } catch {
+          case e: Exception ⇒ ErrorOr.SomeError(e)
+        }
+    
+
+
+    def map[Q](f: V ⇒ Q): ErrorOr[Q] =
+      this match
+        case ErrorOr.SomeError(t) ⇒ ErrorOr.SomeError(t)
+        case ErrorOr.Some(v) ⇒ try {
+          ErrorOr.Some(f(v))
+        } catch {
+          case e: Exception ⇒ ErrorOr.SomeError(e)
+        }
+
+
+
   object ErrorOr:
-    /* 
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-    */
-    def apply = ???
+    
+    def apply[V](v: V): ErrorOr[V] =
+      if v == null then ErrorOr.SomeError(throw new Exception(s"${v}")) else ErrorOr.Some(v) 
+
+
       
   
