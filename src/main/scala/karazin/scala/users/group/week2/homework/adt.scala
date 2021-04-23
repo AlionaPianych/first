@@ -48,18 +48,20 @@ object adt:
     */
     def flatten[U](implicit ev: V <:< ErrorOr[U]): ErrorOr[U] =
       this match
-        case ErrorOr.Some(v) ⇒ ev(v)
+        case ErrorOr.Some(v) ⇒ try {
+          ev(v)
+        } catch {
+          case e: Exception ⇒ ErrorOr.SomeError(e)
+        }
         case ErrorOr.SomeError(e) ⇒ ErrorOr.SomeError(e)
-  
-  
-    /* 
-      The method is used for applying side effects without returning any result
-      Provide a type parameter, an argument and a result type
-    */
     def foreach[U](f: V => U): Unit =
       this match
-        case ErrorOr.Some(v) ⇒ f(v)
-        case ErrorOr.SomeError(e) ⇒ ErrorOr.SomeError(e)
+        case ErrorOr.Some(v) ⇒ try {
+          ErrorOr.Some(f(v))
+        } catch {
+        case e: Exception ⇒ ErrorOr.SomeError(e)
+        }
+        case ErrorOr.SomeError(e) ⇒ throw e
   
   
     // Companion object to define constructor
@@ -71,5 +73,5 @@ object adt:
         no exception is thrown but the case for an error is returned
       */ 
     def apply[V](v: V): ErrorOr[V] = 
-      if v == null then ErrorOr.SomeError(throw new Exception("Some exeption...")) else ErrorOr.Some(v)
+      if v == null then ErrorOr.SomeError(throw new Exception(s"${v}")) else ErrorOr.Some(v)
   
