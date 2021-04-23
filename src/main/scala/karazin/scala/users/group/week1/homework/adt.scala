@@ -24,7 +24,7 @@ object adt:
         case ErrorOr.Some(v) ⇒ try {
           f(v)
         } catch {
-          case NonFatal(e) ⇒ ErrorOr.SomeError(e)
+          case e: Exception ⇒ ErrorOr.SomeError(e)
         }
     
 
@@ -35,7 +35,7 @@ object adt:
         case ErrorOr.Some(v) ⇒ try {
           ErrorOr.Some(f(v))
         } catch {
-          case NonFatal(e) ⇒ ErrorOr.SomeError(e)
+          case e: Exception ⇒ ErrorOr.SomeError(e)
         }
 
 
@@ -43,7 +43,7 @@ object adt:
   object ErrorOr:
     
     def apply[V](v: V): ErrorOr[V] =
-      if v == null then ErrorOr.SomeError(throw new Exception("Some exeption...")) else ErrorOr.Some(v) 
+      if v == null then ErrorOr.SomeError(throw new Exception(s"${v}")) else ErrorOr.Some(v) 
 
 
       
