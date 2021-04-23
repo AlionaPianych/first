@@ -1,5 +1,8 @@
 package karazin.scala.users.group.week2.homework
 
+import scala.util.{Failure, Success}
+import scala.util.control.NonFatal
+
 /* 
   Custom implementation of Option (Maybe monad in Haskell)
   Implemented via Scala 3 way for Algebraic Data Types (ADT)
@@ -12,63 +15,61 @@ package karazin.scala.users.group.week2.homework
 object adt:
   
   enum ErrorOr[+V]:
-    
-    // Added to make it compilable. Remove it.
-    case DummyCase
-    
-    /* 
-      Two case must be defined: 
-      * a case for a regular value
-      * a case for an error (it should contain an actual throwable)
-     */
-  
-    /* 
-      The method is used for defining execution pipelines
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-    */ 
-    def flatMap = ???
 
-    /* 
-      The method is used for changing the internal object
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-     */
-    def map = ???
+    case Some(x: V) extends ErrorOr[V]
   
-    /* 
-      The method is used for filtering
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-     */
-    def withFilter = ???
+    case SomeError(x: Throwable) extends ErrorOr[V]
+  
+    def flatMap[Q](f: V ⇒ ErrorOr[Q]): ErrorOr[Q] = 
+      this match
+        case ErrorOr.SomeError(q) ⇒ ErrorOr.SomeError(q)
+        case ErrorOr.Some(v) ⇒ try {
+          f(v)
+        } catch {
+          case NonFatal(e) ⇒ ErrorOr.SomeError(e)
+        }
+    
+  
+    def map[Q](f: V ⇒ Q): ErrorOr[Q] =
+      this match
+        case ErrorOr.SomeError(t) ⇒ ErrorOr.SomeError(t)
+        case ErrorOr.Some(v) ⇒ try {
+          ErrorOr.Some(f(v))
+        } catch {
+          case NonFatal(e) ⇒ ErrorOr.SomeError(e)
+        }
+  
+  
+    def withFilter(p: V => Boolean): ErrorOr[V] = ???
   
     /* 
       The method is used for getting rid of internal box
       Provide a type parameter, an argument and a result type
     */
-    def flatten = ???
-    
+    def flatten[U](implicit ev: V <:< ErrorOr[U]): ErrorOr[U] =
+      this match
+        case ErrorOr.Some(v) ⇒ ev(v)
+        case ErrorOr.SomeError(e) ⇒ ErrorOr.SomeError(e)
+  
+  
     /* 
       The method is used for applying side effects without returning any result
       Provide a type parameter, an argument and a result type
     */
-    def foreach = ???
-      
-  // Companion object to define constructor
+    def foreach[U](f: V => U): Unit =
+      this match
+        case ErrorOr.Some(v) ⇒ f(v)
+        case ErrorOr.SomeError(e) ⇒ ErrorOr.SomeError(e)
+  
+  
+    // Companion object to define constructor
   object ErrorOr:
-    /* 
-      Provide a type parameter, an argument and a result type
-      
-      Make sure that in case of failing the method with exception
-      no exception is thrown but the case for an error is returned
-    */
-    def apply = ???
-      
+      /* 
+        Provide a type parameter, an argument and a result type
+        
+        Make sure that in case of failing the method with exception
+        no exception is thrown but the case for an error is returned
+      */ 
+    def apply[V](v: V): ErrorOr[V] = 
+      if v == null then ErrorOr.SomeError(throw new Exception("Some exeption...")) else ErrorOr.Some(v)
   
